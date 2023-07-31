@@ -34,7 +34,7 @@ def test_database_database_error(mocked_mongo_client: Mock):
         Database().instantiate_client()
 
 
-@patch("database.Database.MongoClient")
-def test_database_successful_connection(mocked_mongo_client: Mock):
-    client = Database().instantiate_client()
+def test_database_successful_connection():
+    with patch("database.Database.MongoClient"):
+        client = Database().instantiate_client()
     assert client._extract_mock_name() == "MongoClient()"

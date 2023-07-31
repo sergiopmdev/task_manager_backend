@@ -15,7 +15,7 @@ class Database:
 
     Attributes
     ----------
-    MONGODB_URI : str
+    _MONGODB_URI : str
         Database connection string
 
     Methods
@@ -24,7 +24,8 @@ class Database:
         Instantiate MongoDB client
     """
 
-    MONGODB_URI = os.getenv("MONGODB_URI")
+    def __init__(self):
+        self._MONGODB_URI = os.getenv("MONGODB_URI")
 
     def instantiate_client(self) -> MongoClient:
         """
@@ -45,11 +46,11 @@ class Database:
             Error when connecting to MongoDB database
         """
 
-        if not self.MONGODB_URI:
+        if not self._MONGODB_URI:
             raise CredentialsNotFound("MongoDB URI not found in .env")
 
         try:
-            client = MongoClient(self.MONGODB_URI)
+            client = MongoClient(self._MONGODB_URI)
         except Exception:
             raise ClientError("An error occurred instantiating the MongoDB client")
 

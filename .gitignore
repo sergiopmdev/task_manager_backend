@@ -1,2 +1,11 @@
 # Configuration of the development container
 .devcontainer
+
+# Configuration of VSCode
+.vscode
+
+# Python cache
+__pycache__
+
+# Pytest cache
+.pytest_cache

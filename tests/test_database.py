@@ -6,15 +6,13 @@ import pytest
 from database import Database
 from database.exceptions import ClientError, CredentialsNotFound, DatabaseError
 
-MOCKED_URI_VALUES = {"filled": "mocked_uri", "empty": str()}
 
-
-@patch.dict(os.environ, {"MONGODB_URI": MOCKED_URI_VALUES["filled"]})
+@patch.dict(os.environ, {"MONGODB_URI": "mocked_uri"})
 def test_database_uri_value():
-    assert Database()._MONGODB_URI == MOCKED_URI_VALUES["filled"]
+    assert Database()._MONGODB_URI == "mocked_uri"
 
 
-@patch.dict(os.environ, {"MONGODB_URI": MOCKED_URI_VALUES["empty"]})
+@patch.dict(os.environ, {"MONGODB_URI": str()})
 def test_database_uri_not_found():
     with pytest.raises(CredentialsNotFound):
         Database().instantiate_client()

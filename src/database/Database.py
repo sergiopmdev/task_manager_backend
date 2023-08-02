@@ -24,7 +24,11 @@ class Database:
         Instantiate MongoDB client
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize Database class
+        """
+
         self._MONGODB_URI = os.getenv("MONGODB_URI")
 
     def instantiate_client(self) -> MongoClient:

@@ -1,1 +1,1 @@
-from .router import auth_router  # noqa: F401
+from .router import auth_router

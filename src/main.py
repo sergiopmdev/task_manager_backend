@@ -6,7 +6,7 @@ from src.auth.router import auth_router
 
 app = FastAPI()
 
-origins = ["http://localhost:3000"]
+origins = ["http://localhost:3000", "https://task-manager-frontend-six.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,9 +1,9 @@
 {
-    "devCommand": "uvicorn main:app --host 0.0.0.0 --port 8000",
+    "version": 2,
     "builds": [
         {
-            "src": "src/main.py",
-            "use": "@now/python"
+            "src": "/src/main.py",
+            "use": "@vercel/python"
         }
     ],
     "routes": [

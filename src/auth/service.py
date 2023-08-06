@@ -3,9 +3,9 @@ from typing import Any, Dict, Optional
 from bson.objectid import ObjectId
 from passlib.context import CryptContext
 
-from auth.exceptions import UserAlreadyExists
-from auth.schemas import RegisterUser
-from database import Database
+from src.auth.exceptions import UserAlreadyExists
+from src.auth.schemas import RegisterUser
+from src.database.Database import Database
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

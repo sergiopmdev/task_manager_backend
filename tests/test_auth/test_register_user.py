@@ -3,10 +3,10 @@ from unittest.mock import Mock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from auth.exceptions import UserAlreadyExists
-from auth.schemas import RegisterUser
-from auth.service import User
-from main import app
+from src.auth.exceptions import UserAlreadyExists
+from src.auth.schemas import RegisterUser
+from src.auth.service import User
+from src.main import app
 
 test_client = TestClient(app)
 
@@ -21,12 +21,12 @@ def mocked_user() -> RegisterUser:
 
 
 def test_register_user_properties():
-    with patch("auth.service.Database.instantiate_client"):
+    with patch("src.auth.service.Database.instantiate_client"):
         assert User()._db_client._extract_mock_name() == "instantiate_client()"
 
 
 def test_register_user_already_exists(mocked_user: RegisterUser):
-    with patch("auth.service.Database.instantiate_client"):
+    with patch("src.auth.service.Database.instantiate_client"):
         with pytest.raises(UserAlreadyExists):
             user = User()
             mock_get_user = Mock()
@@ -36,7 +36,7 @@ def test_register_user_already_exists(mocked_user: RegisterUser):
 
 
 def test_register_user_succesfull(mocked_user: RegisterUser):
-    with patch("auth.service.Database.instantiate_client"):
+    with patch("src.auth.service.Database.instantiate_client"):
         user = User()
         mock_get_user = Mock()
         mock_get_user.return_value = None
@@ -48,8 +48,8 @@ def test_register_user_succesfull(mocked_user: RegisterUser):
 
 def test_register_user_route_409(mocked_user: RegisterUser):
     with (
-        patch("auth.service.Database.instantiate_client"),
-        patch("auth.service.User._get_user") as mock_get_user,
+        patch("src.auth.service.Database.instantiate_client"),
+        patch("src.auth.service.User._get_user") as mock_get_user,
     ):
         mock_get_user.return_value = {"found": True}
         response = test_client.post(
@@ -66,8 +66,8 @@ def test_register_user_route_409(mocked_user: RegisterUser):
 
 def test_register_user_route_201(mocked_user: RegisterUser):
     with (
-        patch("auth.service.Database.instantiate_client") as mock_db_client,
-        patch("auth.service.User._get_user") as mock_get_user,
+        patch("src.auth.service.Database.instantiate_client") as mock_db_client,
+        patch("src.auth.service.User._get_user") as mock_get_user,
     ):
         mocked_id = "mocked_id"
         mock_db_client.return_value["users_db"][

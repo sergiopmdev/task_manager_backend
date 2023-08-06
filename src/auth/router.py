@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
-from auth.schemas import RegisterUser
-from auth.service import User
+from src.auth.schemas import RegisterUser
+from src.auth.service import User
 
 auth_router = APIRouter(prefix="/auth")
 

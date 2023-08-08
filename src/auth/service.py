@@ -3,8 +3,9 @@ from typing import Any, Dict, Optional
 from bson.objectid import ObjectId
 from passlib.context import CryptContext
 
-from src.auth.exceptions import UserAlreadyExists
-from src.auth.schemas import RegisterUser
+from src.auth.auth import Auth
+from src.auth.exceptions import UserAlreadyExists, UserBadCredentials
+from src.auth.schemas import LoginUser, RegisterUser
 from src.database.Database import Database
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -77,6 +78,57 @@ class User:
         self._db_client.close()
 
         return registered_user_id
+
+    def login_user(self, user: LoginUser) -> Dict[str, str]:
+        """
+        Log the user in using the email and
+        password and return the user's
+        main data and a bearer token
+
+        Parameters
+        ----------
+        user : LoginUser
+            Email and password of the user
+
+        Returns
+        -------
+        Dict[str, str]
+            User's main data and a bearer token
+        """
+
+        LOGIN_ERROR_CODE = 401
+        LOGIN_ERROR_MSG = "Wrong credentials"
+        LOGIN_ERROR_HEADERS = {"WWW-Authenticate": "Bearer"}
+
+        user_email = user.email
+        user_password = user.password.get_secret_value()
+
+        user = self._get_user(user_email=user_email)
+
+        if not user:
+            raise UserBadCredentials(
+                status_code=LOGIN_ERROR_CODE,
+                detail=LOGIN_ERROR_MSG,
+                headers=LOGIN_ERROR_HEADERS,
+            )
+
+        if not pwd_context.verify(user_password, user["password"]):
+            raise UserBadCredentials(
+                status_code=LOGIN_ERROR_CODE,
+                detail=LOGIN_ERROR_MSG,
+                headers=LOGIN_ERROR_HEADERS,
+            )
+
+        data = {
+            "user_data": {
+                "name": user["name"],
+                "email": user["email"],
+            },
+            "token": Auth().create_access_token(),
+            "token_type": "bearer",
+        }
+
+        return data
 
     def _get_user(self, user_email: str) -> Optional[Dict[str, Any]]:
         """

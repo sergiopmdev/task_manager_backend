@@ -8,3 +8,12 @@ class UserAlreadyExists(HTTPException):
     """
 
     pass
+
+
+class UserBadCredentials(HTTPException):
+    """
+    Error occurring when user
+    credentials are not correct
+    """
+
+    pass

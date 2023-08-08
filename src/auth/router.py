@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from src.auth.schemas import RegisterUser
+from src.auth.schemas import LoginUser, RegisterUser
 from src.auth.service import User
 
 auth_router = APIRouter(prefix="/auth")
@@ -19,4 +19,6 @@ def register_user(user: RegisterUser):
 
 @auth_router.post("/token")
 def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    return form_data
+    return User().login_user(
+        user=LoginUser(email=form_data.username, password=form_data.password)
+    )

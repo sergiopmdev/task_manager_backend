@@ -8,3 +8,8 @@ class RegisterUser(BaseModel):
     email: str
     password: SecretStr
     tasks: List[Any] = []
+
+
+class LoginUser(BaseModel):
+    email: str
+    password: SecretStr

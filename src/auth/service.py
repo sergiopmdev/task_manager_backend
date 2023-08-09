@@ -38,6 +38,7 @@ class User:
 
         self._db_client = Database().instantiate_client()
         self._users_collection = self._db_client["users_db"]["users_collection"]
+        self._auth = Auth()
 
     def register_user(self, user: RegisterUser) -> ObjectId:
         """
@@ -124,8 +125,7 @@ class User:
                 "name": user["name"],
                 "email": user["email"],
             },
-            "token": Auth().create_access_token(),
-            "token_type": "bearer",
+            "token": self._auth.create_access_token(),
         }
 
         return data

@@ -1,14 +1,12 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.auth.schemas import LoginUser, RegisterUser
 from src.auth.service import User
 
 auth_router = APIRouter(prefix="/auth")
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @auth_router.post("/register", status_code=status.HTTP_201_CREATED)
@@ -19,6 +17,10 @@ def register_user(user: RegisterUser):
 
 @auth_router.post("/token")
 def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    return User().login_user(
-        user=LoginUser(email=form_data.username, password=form_data.password)
-    )
+    user_credentials = LoginUser(email=form_data.username, password=form_data.password)
+    login_response = User().login_user(user=user_credentials)
+    return {
+        "user_data": login_response["user_data"],
+        "access_token": login_response["token"],
+        "token_type": "bearer",
+    }

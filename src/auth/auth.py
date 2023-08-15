@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
+from jose import JWTError, jwt
+
+from src.auth.exceptions import TokenError
 
 load_dotenv()
 
@@ -55,3 +57,24 @@ class Auth:
             self._secret_key,
             algorithm=self._algorithm,
         )
+
+    def decode_token(self, token: str) -> None:
+        """
+        Decode token to check if it is valid
+
+        Parameters
+        ----------
+        token : str
+            Token to be decoded
+
+        Raises
+        ------
+        TokenError
+            Error occurring when a problem
+            arises when decoding a token
+        """
+
+        try:
+            jwt.decode(token, self._secret_key, algorithms=[self._algorithm])
+        except JWTError:
+            raise TokenError("Invalid token")

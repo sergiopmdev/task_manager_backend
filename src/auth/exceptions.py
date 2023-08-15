@@ -17,3 +17,10 @@ class UserBadCredentials(HTTPException):
     """
 
     pass
+
+
+class TokenError(Exception):
+    """
+    Error occurring when a problem
+    arises when decoding a token
+    """

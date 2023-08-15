@@ -1,10 +1,9 @@
-from typing import Any, Dict, Optional
-
-from fastapi import HTTPException
+from typing import Any, Dict, List, Optional, Union
 
 from src.auth.auth import Auth
 from src.auth.exceptions import TokenError
 from src.database.Database import Database
+from src.tasks.exceptions import NotAuthorizedError, UserDoesNotExists
 
 
 class Tasks:
@@ -37,15 +36,46 @@ class Tasks:
         self._users_collection = self._db_client["users_db"]["users_collection"]
         self._auth = Auth()
 
-    def get_user_tasks(self, email: str, token: str) -> Any:
-        ...
+    def get_user_tasks(
+        self, email: str, token: str
+    ) -> List[Union[Any, Dict[str, Any]]]:
+        """
+        Obtain the tasks associated with a
+        user by searching for him by email
+
+        Parameters
+        ----------
+        email : str
+            Email of the user
+        token : str
+            Bearer token
+
+        Returns
+        -------
+        List[Union[Any, Dict[str, Any]]]
+           Tasks associated with the user
+
+        Raises
+        ------
+        NotAuthorizedError
+            Error occurring when a request or an action
+            could not be validated prior to being executed
+        UserDoesNotExists
+            Error occurring when a user
+            is not found in the database
+        """
 
         try:
             self._auth.decode_token(token=token)
         except TokenError:
-            raise HTTPException(status_code=401, detail="Not authorized")
+            raise NotAuthorizedError(status_code=401, detail="Not authorized")
 
-        return email
+        user = self._get_user(user_email=email)
+
+        if not user:
+            raise UserDoesNotExists(status_code=404, detail="User not found in DB")
+
+        return user["tasks"]
 
     def _get_user(self, user_email: str) -> Optional[Dict[str, Any]]:
         """

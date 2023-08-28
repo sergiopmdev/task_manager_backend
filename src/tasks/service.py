@@ -4,6 +4,7 @@ from src.auth.auth import Auth
 from src.auth.exceptions import TokenError
 from src.database.Database import Database
 from src.tasks.exceptions import NotAuthorizedError, UserDoesNotExists
+from src.utils import Utils
 
 
 class Tasks:
@@ -70,26 +71,9 @@ class Tasks:
         except TokenError:
             raise NotAuthorizedError(status_code=401, detail="Not authorized")
 
-        user = self._get_user(user_email=email)
+        user = Utils().get_user(user_email=email)
 
         if not user:
             raise UserDoesNotExists(status_code=404, detail="User not found in DB")
 
         return user["tasks"]
-
-    def _get_user(self, user_email: str) -> Optional[Dict[str, Any]]:
-        """
-        Get an user from the users collection
-
-        Parameters
-        ----------
-        user_email : str
-            Email of the user
-
-        Returns
-        -------
-        Optional[Dict[str, Any]]
-            Data of the user if exists
-        """
-
-        return self._users_collection.find_one({"email": user_email})

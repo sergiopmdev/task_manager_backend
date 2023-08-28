@@ -7,6 +7,7 @@ from src.auth.auth import Auth
 from src.auth.exceptions import UserAlreadyExists, UserBadCredentials
 from src.auth.schemas import LoginUser, RegisterUser
 from src.database.Database import Database
+from src.utils import Utils
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -64,7 +65,7 @@ class User:
         user_email = user.email
         user_password = pwd_context.hash(user.password.get_secret_value())
 
-        if self._get_user(user_email=user_email):
+        if Utils().get_user(user_email=user_email):
             raise UserAlreadyExists(status_code=409, detail="User already exists")
 
         registered_user_id = self._users_collection.insert_one(
@@ -104,7 +105,7 @@ class User:
         user_email = user.email
         user_password = user.password.get_secret_value()
 
-        user = self._get_user(user_email=user_email)
+        user = Utils().get_user(user_email=user_email)
 
         if not user:
             raise UserBadCredentials(
@@ -129,20 +130,3 @@ class User:
         }
 
         return data
-
-    def _get_user(self, user_email: str) -> Optional[Dict[str, Any]]:
-        """
-        Get an user from the users collection
-
-        Parameters
-        ----------
-        user_email : str
-            Email of the user
-
-        Returns
-        -------
-        Optional[Dict[str, Any]]
-            Data of the user if exists
-        """
-
-        return self._users_collection.find_one({"email": user_email})

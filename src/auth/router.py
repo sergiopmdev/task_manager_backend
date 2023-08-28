@@ -15,7 +15,7 @@ def register_user(user: RegisterUser):
     return {"detail": f"User registered with ID {registered_user_id}"}
 
 
-@auth_router.post("/token")
+@auth_router.post("/token", status_code=status.HTTP_200_OK)
 def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user_credentials = LoginUser(email=form_data.username, password=form_data.password)
     login_response = User().login_user(user=user_credentials)

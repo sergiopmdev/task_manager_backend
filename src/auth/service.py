@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Dict
 
 from bson.objectid import ObjectId
 from passlib.context import CryptContext

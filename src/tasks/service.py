@@ -24,8 +24,9 @@ class Tasks:
 
     Methods
     -------
-    _get_user()
-        Get an user from the users collection
+    get_user_tasks()
+        Obtain the tasks associated with a
+        user by searching for him by email
     """
 
     def __init__(self) -> None:

@@ -36,11 +36,12 @@ def test_register_user_already_exists(mocked_user: RegisterUser):
 
 
 def test_register_user_succesfull(mocked_user: RegisterUser):
-    with patch("src.auth.service.Database.instantiate_client"):
+    with (
+        patch("src.auth.service.Database.instantiate_client"),
+        patch("src.auth.service.Utils.get_user") as mocked_get_user,
+    ):
         user = User()
-        mock_get_user = Mock()
-        mock_get_user.return_value = None
-        user._get_user = mock_get_user
+        mocked_get_user.return_value = None
         mocked_id = "mocked_id"
         user._users_collection.insert_one.return_value.inserted_id = mocked_id
         assert user.register_user(mocked_user) == mocked_id
@@ -49,7 +50,7 @@ def test_register_user_succesfull(mocked_user: RegisterUser):
 def test_register_user_route_409(mocked_user: RegisterUser):
     with (
         patch("src.auth.service.Database.instantiate_client"),
-        patch("src.auth.service.User._get_user") as mock_get_user,
+        patch("src.auth.service.Utils.get_user") as mock_get_user,
     ):
         mock_get_user.return_value = {"found": True}
         response = test_client.post(
@@ -67,7 +68,7 @@ def test_register_user_route_409(mocked_user: RegisterUser):
 def test_register_user_route_201(mocked_user: RegisterUser):
     with (
         patch("src.auth.service.Database.instantiate_client") as mock_db_client,
-        patch("src.auth.service.User._get_user") as mock_get_user,
+        patch("src.auth.service.Utils.get_user") as mock_get_user,
     ):
         mocked_id = "mocked_id"
         mock_db_client.return_value["users_db"][

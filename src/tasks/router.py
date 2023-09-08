@@ -13,7 +13,7 @@ def get_tasks(user_email: str, token: str = Depends(oauth2_scheme)):
     return {"tasks": get_tasks_response}
 
 
-@tasks_router.post("/add_task", status_code=status.HTTP_200_OK)
+@tasks_router.patch("/add_task", status_code=status.HTTP_200_OK)
 def add_task(user_email: str, task: Task, token: str = Depends(oauth2_scheme)):
     add_task_response = Tasks().add_task(email=user_email, new_task=task, token=token)
     return {"detail": add_task_response}

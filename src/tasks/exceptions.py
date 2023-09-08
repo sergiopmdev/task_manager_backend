@@ -17,3 +17,10 @@ class UserDoesNotExists(HTTPException):
     """
 
     pass
+
+
+class TaskAlreadyExists(HTTPException):
+    """
+    Error occurring when the new task that
+    is trying to be inserted already exists
+    """

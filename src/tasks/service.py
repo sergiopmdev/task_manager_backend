@@ -6,6 +6,7 @@ from src.database.Database import Database
 from src.tasks.exceptions import (
     NotAuthorizedError,
     TaskAlreadyExists,
+    TaskDoesNotExist,
     UserDoesNotExists,
 )
 from src.tasks.schemas import Task
@@ -32,6 +33,10 @@ class Tasks:
     get_user_tasks()
         Obtain the tasks associated with a
         user by searching for him by email
+    add_task()
+        Add new task to a user's task list
+    delete_task()
+        Delete task from user's task list
     """
 
     def __init__(self) -> None:
@@ -131,5 +136,49 @@ class Tasks:
         tasks.append(new_task_dict)
 
         self._users_collection.update_one({"email": email}, {"$set": {"tasks": tasks}})
+
+        return f"Tasks updated for the user with ID {user_id}"
+
+    def delete_task(self, email: str, task_name: str, token: str) -> str:
+        """
+        Delete task from user's task list
+
+        Parameters
+        ----------
+        email : str
+            Email of the user
+        task_name : str
+            Task to be deleted
+        token : str
+            Bearer token
+
+        Returns
+        -------
+        str
+            ID of the updated user
+        """
+
+        try:
+            self._auth.decode_token(token=token)
+        except TokenError:
+            raise NotAuthorizedError(status_code=401, detail="Not authorized")
+
+        user = Utils().get_user(user_email=email)
+
+        user_id = user["_id"]
+        tasks = user["tasks"]
+
+        updated_tasks = []
+
+        for task in tasks:
+            if not task["name"] == task_name:
+                updated_tasks.append(task)
+
+        if tasks == updated_tasks:
+            raise TaskDoesNotExist(status_code=404, detail="Task does not exist")
+
+        self._users_collection.update_one(
+            {"email": email}, {"$set": {"tasks": updated_tasks}}
+        )
 
         return f"Tasks updated for the user with ID {user_id}"

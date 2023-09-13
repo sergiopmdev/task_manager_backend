@@ -61,7 +61,10 @@ def test_delete_task_route_404():
             "tasks": [{"name": "Different mocked task"}],
         }
         response = test_client.patch(
-            f"/tasks/delete_task?user_email={MOCKED_EMAIL}&task_name={MOCKED_TASK_NAME}",
+            (
+                f"/tasks/delete_task?user_email={MOCKED_EMAIL}"
+                f"&task_name={MOCKED_TASK_NAME}"
+            ),
             headers={
                 "accept": "application/json",
                 "Authorization": f"Bearer {MOCKED_TOKEN}",
@@ -83,7 +86,10 @@ def test_delete_task_route_200():
             "tasks": [{"name": MOCKED_TASK_NAME}],
         }
         response = test_client.patch(
-            f"/tasks/delete_task?user_email={MOCKED_EMAIL}&task_name={MOCKED_TASK_NAME}",
+            (
+                f"/tasks/delete_task?user_email={MOCKED_EMAIL}"
+                f"&task_name={MOCKED_TASK_NAME}"
+            ),
             headers={
                 "accept": "application/json",
                 "Authorization": f"Bearer {MOCKED_TOKEN}",

@@ -17,3 +17,11 @@ def get_tasks(user_email: str, token: str = Depends(oauth2_scheme)):
 def add_task(user_email: str, task: Task, token: str = Depends(oauth2_scheme)):
     add_task_response = Tasks().add_task(email=user_email, new_task=task, token=token)
     return {"detail": add_task_response}
+
+
+@tasks_router.patch("/delete_task", status_code=status.HTTP_200_OK)
+def delete_task(user_email: str, task_name: str, token: str = Depends(oauth2_scheme)):
+    delete_task_response = Tasks().delete_task(
+        email=user_email, task_name=task_name, token=token
+    )
+    return {"detail": delete_task_response}
